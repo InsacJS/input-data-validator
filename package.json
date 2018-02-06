@@ -1,0 +1,25 @@
+{
+  "name": "insac-field",
+  "version": "1.0.0",
+  "description": "Simplifica la definición de atributos para crear un modelo Sequelize.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/waquispe/insac-validator.git"
+  },
+  "keywords": [
+    "insac",
+    "field",
+    "web",
+    "service"
+  ],
+  "author": "Wilmer Alex Quispe Quispe <q.wilmer.alex@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/waquispe/insac-validator/issues"
+  },
+  "homepage": "https://github.com/waquispe/insac-validator#readme"
+}
