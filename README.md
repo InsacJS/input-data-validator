@@ -1,37 +1,63 @@
-# Insac Field
-Simplifica la definición de atributos para crear un modelo Sequelize.
+# Insac Validator
+Valida los datos de entrada de una ruta de un servicio web creado con express.
 
 # Características
-- Define attributos con la propiedad validate incluida.
-- Crea objetos utilizando atributos predefinidos.
+- Crea un middleware a partir de un objeto que contiene los datos de entrada ({ headers, params, query, body }).
+- El dato de entrada es un objeto creado con los atributos de un modelo Sequelize.
+- Elimina aquellos campos que no se encuentran entre los datos de entrada.
 
-# Ejemplo 1
+# Ejemplo
 ``` js
+const { Validator } = require('insac-validator')
 const { Field } = require('insac-field')
+const express = require('express')
 
-module.exports = (sequelize, Sequelize) => {
-  return sequelize.define('libro', {
-    id: Field.ID(),
-    titulo: Field.STRING(10),
+const app = express()
+const INPUT = {
+  body: {
+    titulo: Field.STRING(10, { allowNull: false }),
     precio: Field.FLOAT()
-  })
+  }
 }
+app.post('/libros', Validator.validate(INPUT), (req, res, next) => {
+  res.status(201).json({ status: 'OK', data: req.body })
+})
+app.use((err, req, res, next) => {
+  res.status(400).json({ status: 'FAIL', error: err })
+})
+app.listen(4000)
 ```
 
-# Ejemplo 2.
-``` js
-const { Field, FieldContainer } = require('insac-field')
-
-const container = new FieldContainer()
-container.define('libro', {
-  id: Field.ID(),
-  titulo: Field.STRING(10),
-  precio: Field.FLOAT()
-})
-const INPUT = {
-  body: container.group('libro', {
-    titulo: Field.THIS({ allowNull: false }),
-    precio: Field.THIS({ allowNull: false })
-  })
+### Resultado con datos válidos.
+`curl -H "Content-Type: application/json" -X POST -d '{ "id": 123, "titulo": "El cuervo", "precio": 11.99 }' http://localhost:4000/libros`
+``` json
+{
+  "status": "OK",
+  "data": {
+    "titulo": "El cuervo",
+    "precio": 11.99
+  }
+}
+```
+### Resultado con datos inválidos.
+`curl -H "Content-Type: application/json" -X POST -d '{ "precio": -124 }' http://localhost:4000/libros`
+``` json
+{
+  "status": "FAIL",
+  "error": {
+    "name": "InsacValidationError",
+    "errors": [
+      {
+        "path": "body.titulo",
+        "value": null,
+        "msg": "Se requiere el campo 'titulo'."
+      },
+      {
+        "path": "body.precio",
+        "value": -124,
+        "msg": "El precio debe ser mayor o igual a 0."
+      }
+    ]
+  }
 }
 ```

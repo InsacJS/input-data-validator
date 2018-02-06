@@ -1,7 +1,7 @@
 {
-  "name": "insac-field",
+  "name": "insac-validator",
   "version": "1.0.0",
-  "description": "Simplifica la definición de atributos para crear un modelo Sequelize.",
+  "description": "Valida los datos de entrada de una ruta de un servicio web creado con express.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,7 +12,7 @@
   },
   "keywords": [
     "insac",
-    "field",
+    "validator",
     "web",
     "service"
   ],
