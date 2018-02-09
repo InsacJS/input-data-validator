@@ -122,7 +122,6 @@ app.listen(4000)
 ### Resultado con datos inválidos.
 `curl -H "Content-Type: application/json" -X POST -d '{ "precio": -124 }' http://localhost:4000/libros`
 ``` json
-console.log('BODY = ', JSON.stringify(body, null, 2))
 {
   "status": "FAIL",
   "error": {
