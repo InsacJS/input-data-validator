@@ -4,7 +4,9 @@
   "description": "Valida los datos de entrada de una ruta de un servicio web creado con express.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha --recursive test",
+    "doc": "./node_modules/.bin/esdoc",
+    "lint": "./node_modules/.bin/eslint ./lib"
   },
   "repository": {
     "type": "git",
@@ -21,5 +23,23 @@
   "bugs": {
     "url": "https://github.com/waquispe/insac-validator/issues"
   },
-  "homepage": "https://github.com/waquispe/insac-validator#readme"
+  "homepage": "https://github.com/waquispe/insac-validator#readme",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "esdoc": "^1.0.4",
+    "esdoc-standard-plugin": "^1.0.0",
+    "eslint": "^4.17.0",
+    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^6.0.0",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "express": "^4.16.2",
+    "mocha": "^5.0.0",
+    "pg": "^7.4.1",
+    "sequelize": "^4.32.7"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2"
+  }
 }
