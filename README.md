@@ -1,4 +1,4 @@
-# Insac Validator
+# Input field validator
 
 Valida los datos de entrada de una ruta de un servicio web creado con express.
 
@@ -19,7 +19,7 @@ const input = {
 }
 ```
 
-Pueden ser un simple objeto o una lista de objetos:
+Pueden ser un simple objeto o una lista de objetos (fieldGroup):
 ``` js
 const input = {
   body: { // Objeto
@@ -60,7 +60,7 @@ const output = [{
 
 Para instalar sobre un proyecto, ejecutar el siguiente comando:
 
-$ `sudo npm install --save insac-validator`
+$ `npm install --save input-field-validator`
 
 # Ejemplos
 
@@ -69,7 +69,7 @@ $ `sudo npm install --save insac-validator`
 Crear un middleware.
 
 ``` js
-const { Validator } = require('insac-validator')
+const { Validator } = require('input-field-validator')
 const express = require('express')
 
 const LIBRO = sequelize.define('libro', {
@@ -125,7 +125,7 @@ app.listen(4000)
 {
   "status": "FAIL",
   "error": {
-    "name": "InsacValidationError",
+    "name": "InputFieldValidationError",
     "errors": [
       {
         "path": "body.titulo",

@@ -1,1 +1,1 @@
-module.exports = require('./lib/insac-validator')
+module.exports = require('./lib/input-field-validator')

@@ -12,9 +12,9 @@
         "coverage": { "enable": true },
         "typeInference": { "enable": true },
         "brand": {
-          "title": "Insac Apidoc",
+          "title": "Input Field Validator",
           "description": "Crea el apidoc de las rutas de un servicio web según el formato que establece ApidocJS.",
-          "repository": "https://github.com/waquispe/insac-apidoc"
+          "repository": "https://github.com/waquispe/input-field-validation"
         }
       }
     }
