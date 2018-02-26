@@ -1,17 +1,17 @@
 /* global describe it expect */
 const Validator = require('../../lib/class/Validator')
 const Sequelize = require('sequelize')
-const express = require('express')
-const request = require('request')
+const express   = require('express')
+const request   = require('request')
 
 const PARAMS = {
-  dialect: 'postgres',
-  lang: 'es',
-  logging: false,
-  define: {
-    underscored: true,
-    freezeTableName: true,
-    timestamps: false
+  dialect : 'postgres',
+  lang    : 'es',
+  logging : false,
+  define  : {
+    underscored     : true,
+    freezeTableName : true,
+    timestamps      : false
   },
   operatorsAliases: false
 }
@@ -22,20 +22,20 @@ describe('\n - Clase: Validator\n', () => {
       const sequelize = new Sequelize(null, null, null, PARAMS)
       const LIBRO = sequelize.define('libro', {
         id: {
-          type: Sequelize.INTEGER(),
-          primaryKey: true
+          type       : Sequelize.INTEGER(),
+          primaryKey : true
         },
         titulo: {
-          type: Sequelize.STRING(),
-          allowNull: false,
-          allowNullMsg: `El campo 'titulo' es requerido`,
-          validate: {
+          type         : Sequelize.STRING(),
+          allowNull    : false,
+          allowNullMsg : `El campo 'titulo' es requerido`,
+          validate     : {
             len: { args: [0, 10], msg: `El campo 'titulo' del modelo 'libro' debe tener entre 0 y 10 caracteres.` }
           }
         },
         precio: {
-          type: Sequelize.FLOAT(),
-          validate: {
+          type     : Sequelize.FLOAT(),
+          validate : {
             min: { args: [0], msg: `El campo 'precio' del modelo 'libro' debe ser mayor o igual a 0.` }
           }
         }
@@ -43,8 +43,8 @@ describe('\n - Clase: Validator\n', () => {
 
       const INPUT = {
         body: {
-          titulo: LIBRO.attributes.titulo,
-          precio: LIBRO.attributes.precio
+          titulo : LIBRO.attributes.titulo,
+          precio : LIBRO.attributes.precio
         }
       }
 
@@ -57,9 +57,9 @@ describe('\n - Clase: Validator\n', () => {
       })
       app.listen(4000)
       let options = {
-        uri: `http://localhost:4000/libros`,
-        method: 'POST',
-        json: { id: 123, titulo: 'El cuervo', precio: 11.99 }
+        uri    : `http://localhost:4000/libros`,
+        method : 'POST',
+        json   : { id: 123, titulo: 'El cuervo', precio: 11.99 }
       }
       request(options, (error, response, body) => {
         if (error) { console.log(error); done() }
@@ -82,7 +82,7 @@ describe('\n - Clase: Validator\n', () => {
           expect(body).to.have.property('status', 'FAIL')
           expect(body).to.have.property('error')
           expect(body.error).to.be.an('object')
-          expect(body.error.name).to.equal('InsacValidationError')
+          expect(body.error.name).to.equal('InputFieldValidationError')
           expect(body.error.errors).to.be.an('array')
           const errors = body.error.errors
           expect(errors).to.have.lengthOf(2)
@@ -93,7 +93,7 @@ describe('\n - Clase: Validator\n', () => {
           // {
           //   "status": "FAIL",
           //   "error": {
-          //     "name": "InsacValidationError",
+          //     "name": "InputFieldValidationError",
           //     "errors": [
           //       {
           //         "path": "body.titulo",
