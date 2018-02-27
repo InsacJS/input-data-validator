@@ -1,0 +1,22 @@
+{
+  "source": "./lib",
+  "destination": "./docs/",
+  "includes": ["\\.js$"],
+  "plugins": [
+    {
+      "name": "esdoc-standard-plugin",
+      "option": {
+        "undocumentIdentifier": { "enable": false },
+        "unexportedIdentifier": { "enable": true },
+        "lint": { "enable": true },
+        "coverage": { "enable": true },
+        "typeInference": { "enable": true },
+        "brand": {
+          "title": "Input Field Validator",
+          "description": "Crea el apidoc de las rutas de un servicio web según el formato que establece ApidocJS.",
+          "repository": "https://github.com/waquispe/input-field-validation"
+        }
+      }
+    }
+  ]
+}
