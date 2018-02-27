@@ -14,7 +14,7 @@
         "brand": {
           "title": "Input Field Validator",
           "description": "Crea el apidoc de las rutas de un servicio web según el formato que establece ApidocJS.",
-          "repository": "https://github.com/waquispe/input-field-validation"
+          "repository": "https://github.com/waquispe/input-field-validator"
         }
       }
     }

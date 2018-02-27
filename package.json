@@ -13,7 +13,7 @@
     "url": "git+https://github.com/waquispe/input-field-validator.git"
   },
   "keywords": [
-    "insac",
+    "sequelize",
     "validator",
     "web",
     "service"
