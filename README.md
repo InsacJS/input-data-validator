@@ -1,4 +1,4 @@
-# Input field validator
+# Input Data validator
 
 Valida los datos de entrada de una ruta de un servicio web creado con express.
 
@@ -60,7 +60,7 @@ const output = [{
 
 Para instalar sobre un proyecto, ejecutar el siguiente comando:
 
-$ `npm install --save input-field-validator`
+$ `npm install --save input-data-validator`
 
 # Ejemplos
 
@@ -69,7 +69,7 @@ $ `npm install --save input-field-validator`
 Crear un middleware.
 
 ``` js
-const { Validator } = require('input-field-validator')
+const { Validator } = require('input-data-validator')
 const express = require('express')
 
 const LIBRO = sequelize.define('libro', {
@@ -125,7 +125,7 @@ app.listen(4000)
 {
   "status": "FAIL",
   "error": {
-    "name": "InputFieldValidationError",
+    "name": "InputDataValidationError",
     "errors": [
       {
         "path": "body.titulo",

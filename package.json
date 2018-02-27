@@ -1,5 +1,5 @@
 {
-  "name": "input-field-validator",
+  "name": "input-data-validator",
   "version": "1.0.0",
   "description": "Valida los datos de entrada de una ruta de un servicio web creado con express.",
   "main": "index.js",
@@ -10,9 +10,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/waquispe/input-field-validator.git"
+    "url": "git+https://github.com/waquispe/input-data-validator.git"
   },
   "keywords": [
+    "insac",
     "sequelize",
     "validator",
     "web",
@@ -21,9 +22,9 @@
   "author": "Wilmer Alex Quispe Quispe <q.wilmer.alex@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/waquispe/input-field-validator/issues"
+    "url": "https://github.com/waquispe/input-data-validator/issues"
   },
-  "homepage": "https://github.com/waquispe/input-field-validator#readme",
+  "homepage": "https://github.com/waquispe/input-data-validator#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
     "handlebars": "^4.0.11"

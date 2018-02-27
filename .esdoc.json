@@ -12,9 +12,9 @@
         "coverage": { "enable": true },
         "typeInference": { "enable": true },
         "brand": {
-          "title": "Input Field Validator",
-          "description": "Crea el apidoc de las rutas de un servicio web según el formato que establece ApidocJS.",
-          "repository": "https://github.com/waquispe/input-field-validator"
+          "title": "Input Data Validator",
+          "description": "Valida los datos de entrada de una ruta de un servicio web creado con express.",
+          "repository": "https://github.com/waquispe/input-data-validator"
         }
       }
     }

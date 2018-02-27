@@ -82,7 +82,7 @@ describe('\n - Clase: Validator\n', () => {
           expect(body).to.have.property('status', 'FAIL')
           expect(body).to.have.property('error')
           expect(body.error).to.be.an('object')
-          expect(body.error.name).to.equal('InputFieldValidationError')
+          expect(body.error.name).to.equal('InputDataValidationError')
           expect(body.error.errors).to.be.an('array')
           const errors = body.error.errors
           expect(errors).to.have.lengthOf(2)
@@ -93,7 +93,7 @@ describe('\n - Clase: Validator\n', () => {
           // {
           //   "status": "FAIL",
           //   "error": {
-          //     "name": "InputFieldValidationError",
+          //     "name": "InputDataValidationError",
           //     "errors": [
           //       {
           //         "path": "body.titulo",
