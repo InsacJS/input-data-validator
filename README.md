@@ -34,27 +34,26 @@ const input = {
   }]
 }
 ```
-La propiedad `input.body`, pueden incluir objetos anidados (asociaciones de los modelos):
+La propiedad `input.body`, pueden incluir objetos anidados:
 ``` js
-const output = [{
-  id: FIELD,
-  titulo: FIELD,
-  precio: FIELD,
-  autor: {
-    id: FIELD,
-    nombre: FIELD,
-    usuario: {
-      id: FIELD,
-      username: FIELD,
-      password: FIELD,
-      roles: [{
-        id: FIELD,
-        nombre: FIELD
-      }]
+const input = {
+  body: [{
+    titulo: FIELD,
+    precio: FIELD,
+    autor: {
+      nombre: FIELD,
+      usuario: {
+        username: FIELD,
+        password: FIELD,
+        roles: [{
+          nombre: FIELD
+        }]
+      }
     }
-  }
-}]
+  }]
+}
 ```
+**Nota.-** Para crear el objeto `input`, se recomienda utilizar la librería [field-creator](https://github.com/waquispe/field-creator).
 
 # Instalación
 
