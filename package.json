@@ -1,6 +1,6 @@
 {
   "name": "input-data-validator",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Valida los datos de entrada de una ruta de un servicio web creado con express.",
   "main": "index.js",
   "scripts": {
