@@ -1,5 +1,6 @@
 /* global describe it expect */
 const Validator = require('../../lib/class/Validator')
+const { Field, THIS } = require('field-creator')
 const Sequelize = require('sequelize')
 const express   = require('express')
 const request   = require('request')
@@ -21,46 +22,39 @@ describe('\n - Clase: Validator\n', () => {
     it('Ejecución con parámetros', (done) => {
       const sequelize = new Sequelize(null, null, null, PARAMS)
       const LIBRO = sequelize.define('libro', {
-        id: {
-          type       : Sequelize.INTEGER(),
-          primaryKey : true
-        },
-        titulo: {
-          type         : Sequelize.STRING(),
-          allowNull    : false,
-          allowNullMsg : `El campo 'titulo' es requerido`,
-          validate     : {
-            len: { args: [0, 10], msg: `El campo 'titulo' del modelo 'libro' debe tener entre 0 y 10 caracteres.` }
-          }
-        },
-        precio: {
-          type     : Sequelize.FLOAT(),
-          validate : {
-            min: { args: [0], msg: `El campo 'precio' del modelo 'libro' debe ser mayor o igual a 0.` }
-          }
-        }
+        id     : Field.ID(),
+        titulo : Field.STRING({ allowNull: false, allowNullMsg: `Se requiere el título.` }),
+        precio : Field.FLOAT({ validate: { min: { args: [0], msg: `El precio debe ser mayor o igual a 0.` } } })
       })
 
       const INPUT = {
-        body: {
-          titulo : LIBRO.attributes.titulo,
-          precio : LIBRO.attributes.precio
-        }
+        body: Field.group(LIBRO, {
+          titulo : THIS(),
+          precio : THIS()
+        })
       }
 
       const app = express()
+
       app.post('/libros', Validator.validate(INPUT), (req, res, next) => {
         res.status(201).json({ status: 'OK', data: req.body })
       })
+
       app.use((err, req, res, next) => {
-        res.status(400).json({ status: 'FAIL', error: err })
+        if (err.name === 'InputDataValidationError') {
+          return res.status(400).json({ status: 'FAIL', error: err })
+        }
+        return res.status(500).json({ status: 'FAIL', error: err })
       })
+
       app.listen(4000)
+
       let options = {
         uri    : `http://localhost:4000/libros`,
         method : 'POST',
         json   : { id: 123, titulo: 'El cuervo', precio: 11.99 }
       }
+
       request(options, (error, response, body) => {
         if (error) { console.log(error); done() }
         expect(body).to.have.property('status', 'OK')
@@ -69,7 +63,7 @@ describe('\n - Clase: Validator\n', () => {
         expect(body.data).to.have.property('titulo', options.json.titulo)
         expect(body.data).to.have.property('precio', options.json.precio)
         console.log('BODY = ', JSON.stringify(body, null, 2))
-        // {
+        // BODY =  {
         //   "status": "OK",
         //   "data": {
         //     "titulo": "El cuervo",
@@ -90,7 +84,7 @@ describe('\n - Clase: Validator\n', () => {
           expect(errors[0]).to.have.property('value')
           expect(errors[0]).to.have.property('msg')
           console.log('BODY = ', JSON.stringify(body, null, 2))
-          // {
+          // BODY =  {
           //   "status": "FAIL",
           //   "error": {
           //     "name": "InputDataValidationError",
@@ -98,12 +92,12 @@ describe('\n - Clase: Validator\n', () => {
           //       {
           //         "path": "body.titulo",
           //         "value": null,
-          //         "msg": "El campo 'titulo' es requerido."
+          //         "msg": "Se requiere el título."
           //       },
           //       {
           //         "path": "body.precio",
           //         "value": -124,
-          //         "msg": "El campo 'precio' del modelo 'libro' debe ser mayor o igual a 0."
+          //         "msg": "El precio debe ser mayor o igual a 0."
           //       }
           //     ]
           //   }

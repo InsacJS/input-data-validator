@@ -1,108 +1,107 @@
 # Input Data validator
 
-Valida los datos de entrada de una ruta de un servicio web creado con express.
+Existen varias herramientas para validar los datos de entrada, sin embargo, cuando se trabaja con un ORM como Sequelize se definen modelos cuyos atributos tienen un tipo de dato definido y en algunos casos un validador, sería interesante poder reutilizar estos atributos evitando de esa forma una doble implementación.
 
-# Características
+Input Data Validator es un validador que crea esquemas de validación utilizando objetos de tipo `FieldGroup` los cuales se crean con la librería `field-creator`. Esta librería crea estos objetos a partir de modelos Sequelize, por lo que solamente será necesario incluir los validadores dentro de los modelos.
 
-- Crea un middleware a partir de un objeto que contiene los datos de entrada ({ headers, params, query, body }).
-- El dato de entrada es un objeto creado con los atributos de un modelo Sequelize.
-- Elimina aquellos campos que no se encuentran entre los datos de entrada.
+## Características
 
-## Objeto input
+- Crea un middleware para validar los datos de entrada, utilizando objetos de tipo `FieldGroup`.
+- Es posible indicar si se eliminarán los datos de entrada que no hayan sido definidos en el esquema de validación. Por defecto se eliminan en el caso del body.
 
-``` js
-const input = {
-  query: FIELD,
-  headers: FIELD,
-  params: FIELD,
-  body: FIELD
+## Esquema de validación
+
+Un esquema de validación, es un objeto que tiene las propiedades `headers`, `params`, `query` y `body`, los cuales son objetos de tipo `FieldGroup`.
+
+```js
+const INPUT = {
+  headers : Field.group(LIBRO, { ... }),
+  params  : Field.group(LIBRO, { ... }),
+  query   : Field.group(LIBRO, { ... }),
+  body    : Field.group(LIBRO, { ... })
 }
 ```
 
-Pueden ser un simple objeto o una lista de objetos (fieldGroup):
-``` js
-const input = {
-  body: { // Objeto
-    titulo: FIELD,
-    precio: FIELD
+Para crear el objeto `input`, se recomienda utilizar la librería [field-creator](https://github.com/waquispe/field-creator).
+
+## Middleware de validación
+
+```js
+const { Validator } = require('input-data-validator')
+
+const app = express()
+const LIBRO = sequelize.define('libro', { ... })
+
+const INPUT = {
+  body: Field.group(LIBRO, {
+    titulo : THIS({ alowNull: false }),
+    precio : THIS({ alowNull: false })
+  })
+}
+
+app.post('/libros', Validator.validate(INPUT), (req, res, next) => {
+  return res.status(201).json({ status: 'OK', data: req.body })
+})
+
+// Para capturar los errores de validación.
+app.use((err, req, res, next) => {
+  if (err.name === 'InputDataValidationError') {
+    // Error de validación
   }
-}
-const input = {
-  body: [{ // Lista de objetos
-    titulo: FIELD,
-    precio: FIELD
-  }]
-}
-```
-La propiedad `input.body`, pueden incluir objetos anidados:
-``` js
-const input = {
-  body: [{
-    titulo: FIELD,
-    precio: FIELD,
-    autor: {
-      nombre: FIELD,
-      usuario: {
-        username: FIELD,
-        password: FIELD,
-        roles: [{
-          nombre: FIELD
-        }]
-      }
-    }
-  }]
-}
-```
-**Nota.-** Para crear el objeto `input`, se recomienda utilizar la librería [field-creator](https://github.com/waquispe/field-creator).
+})
 
-# Instalación
+app.listen(4000)
+```
+
+## Formato del objeto `ValidationError`
+
+| Propiedad      | Descripción               |
+|----------------|---------------------------|
+| `name`         | Nombre del error.         |
+| `errors`       | Lista de errores.         |
+| `errors.path`  | Ruta del campo.           |
+| `errors.value` | Valor actual del campo.   |
+| `errors.msg`   | Mensaje de error.         |
+
+## Instalación
 
 Para instalar sobre un proyecto, ejecutar el siguiente comando:
 
 $ `npm install --save input-data-validator`
 
-# Ejemplos
-
-## Ejemplo 1
-
-Crear un middleware.
+## Ejemplo
 
 ``` js
-const { Validator } = require('input-data-validator')
+const { Validator }   = require('input-data-validator')
+const { Field, THIS } = require('field-creator')
 const express = require('express')
 
 const LIBRO = sequelize.define('libro', {
-  id: {
-    type: Sequelize.INTEGER(),
-    primaryKey: true
-  },
-  titulo: {
-    type: Sequelize.STRING(),
-    allowNull: false,
-    allowNullMsg: `El campo 'titulo' es requerido`
-  },
-  precio: {
-    type: Sequelize.FLOAT(),
-    validate: {
-      min: { args: [0], msg: `El campo 'precio' del modelo 'libro' debe ser mayor o igual a 0.` }
-    }
-  }
+  id     : Field.ID(),
+  titulo : Field.STRING({ allowNull: false, allowNullMsg: `Se requiere el título.` }),
+  precio : Field.FLOAT({ validate: { min: { args: [0], msg: `El precio debe ser mayor o igual a 0.` } } })
 })
 
 const INPUT = {
-  body: {
-    titulo: LIBRO.attributes.titulo,
-    precio: LIBRO.attributes.precio
-  }
+  body: Field.group(LIBRO, {
+    titulo : THIS(),
+    precio : THIS()
+  })
 }
 
 const app = express()
+
 app.post('/libros', Validator.validate(INPUT), (req, res, next) => {
   res.status(201).json({ status: 'OK', data: req.body })
 })
+
 app.use((err, req, res, next) => {
-  res.status(400).json({ status: 'FAIL', error: err })
+  if (err.name === 'InputDataValidationError') {
+    return res.status(400).json({ status: 'FAIL', error: err })
+  }
+  return res.status(500).json({ status: 'FAIL', error: err })
 })
+
 app.listen(4000)
 ```
 
@@ -129,12 +128,12 @@ app.listen(4000)
       {
         "path": "body.titulo",
         "value": null,
-        "msg": "El campo 'titulo' es requerido."
+        "msg": "Se requiere el título."
       },
       {
         "path": "body.precio",
         "value": -124,
-        "msg": "El campo 'precio' del modelo 'libro' debe ser mayor o igual a 0."
+        "msg": "El precio debe ser mayor o igual a 0."
       }
     ]
   }
