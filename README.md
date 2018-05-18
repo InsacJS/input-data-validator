@@ -22,7 +22,7 @@ const INPUT = {
 }
 ```
 
-Para crear el objeto `input`, se recomienda utilizar la librería [field-creator](https://github.com/waquispe/field-creator).
+Para crear el objeto `input`, se recomienda utilizar la librería [field-creator](https://github.com/insacjs/field-creator).
 
 ## Middleware de validación
 

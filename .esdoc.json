@@ -14,7 +14,7 @@
         "brand": {
           "title": "Input Data Validator",
           "description": "Valida los datos de entrada de una ruta de un servicio web creado con express.",
-          "repository": "https://github.com/waquispe/input-data-validator"
+          "repository": "https://github.com/insacjs/input-data-validator"
         }
       }
     }

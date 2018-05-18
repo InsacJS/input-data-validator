@@ -10,10 +10,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/waquispe/input-data-validator.git"
+    "url": "git+https://github.com/insacjs/input-data-validator.git"
   },
   "keywords": [
     "insac",
+    "insacjs",
     "sequelize",
     "rest",
     "validator",
@@ -23,9 +24,9 @@
   "author": "Wilmer Alex Quispe Quispe <q.wilmer.alex@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/waquispe/input-data-validator/issues"
+    "url": "https://github.com/insacjs/input-data-validator/issues"
   },
-  "homepage": "https://github.com/waquispe/input-data-validator#readme",
+  "homepage": "https://github.com/insacjs/input-data-validator#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
     "handlebars": "^4.0.11"
