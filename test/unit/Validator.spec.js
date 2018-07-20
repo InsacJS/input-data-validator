@@ -20,6 +20,125 @@ const PARAMS = {
 const PORT = 4005
 
 describe('\n - Clase: Validator\n', () => {
+  describe(' Método: constructor', () => {
+    it('Probando el envío de datos por demás', async () => {
+      let input, result
+      input = {
+        headers : { a: Field.STRING() },
+        params  : { a: Field.STRING() },
+        query   : { a: Field.STRING() },
+        body    : { a: Field.STRING() }
+      }
+      result = await _validarInput(input, ['headers', 'params', 'query', 'body'], {
+        body    : { a: '1', b: '2' },
+        headers : { a: '1', b: '2' },
+        params  : { a: '1', b: '2' },
+        query   : { a: '1', b: '2' }
+      })
+      expect(result.headers).to.be.an('object')
+      expect(Object.keys(result.headers).length).to.equal(1)
+      expect(result.headers).to.have.property('a', '1')
+      expect(result.headers).to.not.have.property('b')
+
+      expect(result.params).to.be.an('object')
+      expect(Object.keys(result.params).length).to.equal(1)
+      expect(result.params).to.have.property('a', ':a')
+      expect(result.params).to.not.have.property('b')
+
+      expect(result.query).to.be.an('object')
+      expect(Object.keys(result.query).length).to.equal(1)
+      expect(result.query).to.have.property('a', '1')
+      expect(result.query).to.not.have.property('b')
+
+      expect(result.body).to.be.an('object')
+      expect(Object.keys(result.body).length).to.equal(1)
+      expect(result.body).to.have.property('a', '1')
+      expect(result.body).to.not.have.property('b')
+
+      result = await _validarInput(input, [], {
+        body    : { a: '1', b: '2' },
+        headers : { a: '1', b: '2' },
+        params  : { a: '1', b: '2' },
+        query   : { a: '1', b: '2' }
+      })
+      expect(result.body).to.be.an('object')
+      expect(Object.keys(result.body).length).to.equal(2)
+      expect(result.body).to.have.property('a', '1')
+      expect(result.body).to.have.property('b', '2')
+      expect(result.headers).to.be.an('object')
+      expect(result.headers).to.have.property('a', '1')
+      expect(result.headers).to.have.property('b', '2')
+      expect(result.params).to.be.an('object')
+      expect(result.params).to.have.property('a', ':a')
+      expect(result.params).to.not.have.property('b') // Caso especial, porque al definir la url, no se tomo en cuenta este campo.
+      expect(result.query).to.be.an('object')
+      expect(result.query).to.have.property('a', '1')
+      expect(result.query).to.have.property('b', '2')
+    })
+  })
+
+  describe(' Método: isRequired', () => {
+    let input
+    it('Campos de tipo FIELD', () => {
+      input = {
+        a : Field.STRING(),
+        b : Field.STRING({ allowNullObj: false })
+      }
+      expect(Validator.isRequired(input.a)).to.equal(false)
+      expect(Validator.isRequired(input.b)).to.equal(true)
+    })
+    it('Campos de tipo OBJECT Nivel 1', () => {
+      input = {
+        a : { nombre: Field.STRING() },
+        b : { nombre: Field.STRING({ allowNullObj: false }) }
+      }
+      expect(Validator.isRequired(input.a)).to.equal(false)
+      expect(Validator.isRequired(input.b)).to.equal(true)
+    })
+    it('Campos de tipo ARRAY Nivel 1', () => {
+      input = {
+        a : [{ nombre: Field.STRING() }],
+        b : [{ nombre: Field.STRING({ allowNullObj: false }) }]
+      }
+      expect(Validator.isRequired(input.a)).to.equal(false)
+      expect(Validator.isRequired(input.b)).to.equal(true)
+    })
+    it('Campos de tipo OBJECT Nivel 2', () => {
+      input = {
+        a : { aa: { nombre: Field.STRING() } },
+        b : { bb: { nombre: Field.STRING({ allowNullObj: false }) } }
+      }
+      expect(Validator.isRequired(input.a)).to.equal(false)
+      expect(Validator.isRequired(input.b)).to.equal(false)
+    })
+    it('Campos de tipo ARRAY Nivel 2', () => {
+      input = {
+        a : [{ aa: { nombre: Field.STRING() } }],
+        b : [{ bb: { nombre: Field.STRING({ allowNullObj: false }) } }]
+      }
+      expect(Validator.isRequired(input.a)).to.equal(false)
+      expect(Validator.isRequired(input.b)).to.equal(false)
+    })
+    it('Campos de tipo OBJECT Nivel 3', () => {
+      input = {
+        a : { aa: { aaa: { nombre: Field.STRING() } } },
+        b : { bb: { bbb: { nombre: Field.STRING({ allowNullObj: false }) } } }
+      }
+      expect(Validator.isRequired(input.a)).to.equal(false)
+      expect(Validator.isRequired(input.b)).to.equal(false)
+    })
+    // Nota.- Al verificar se toma en cuenta los campos de de tipo FIELD de primer nivel,
+    // ignorando los campos de tipo OBJECT y ARRAY.
+    it('Campos de tipo ARRAY Nivel 3', () => {
+      input = {
+        a : [{ aa: { aaa: { nombre: Field.STRING() } } }],
+        b : [{ bb: { bbb: { nombre: Field.STRING({ allowNullObj: false }) } } }]
+      }
+      expect(Validator.isRequired(input.a)).to.equal(false)
+      expect(Validator.isRequired(input.b)).to.equal(false)
+    })
+  })
+
   describe(` Método: validate con el tipo de dato STRING.`, () => {
     it('Validate con un modelo Sequelize', async () => {
       const sequelize = new Sequelize(null, null, null, PARAMS)
@@ -31,7 +150,7 @@ describe('\n - Clase: Validator\n', () => {
       const INPUT = { body: Field.group(LIBRO, { titulo: THIS(), precio: THIS() }) }
       const server = await _createServer(INPUT)
       let options = {
-        uri    : `http://localhost:${PORT}/libros`,
+        uri    : `http://localhost:${PORT}/api`,
         method : 'POST',
         json   : { id: 123, titulo: 'El cuervo', precio: 11.99 }
       }
@@ -257,7 +376,7 @@ async function _validar (validatorName, validatorValue, validData = [], invalidD
   // console.log(require('util').inspect(INPUT.body.single.validate, { depth: null }), 'INVALID =', invalidData)
   const server = await _createServer(INPUT)
   let options = {
-    uri    : `http://localhost:${PORT}/libros`,
+    uri    : `http://localhost:${PORT}/api`,
     method : 'POST'
   }
   for (let i in validData) {
@@ -277,10 +396,36 @@ async function _validar (validatorName, validatorValue, validData = [], invalidD
   await server.close()
 }
 
-async function _createServer (INPUT) {
+async function _validarInput (input, inputOptions = ['body'], data) {
+  const server = await _createServer(input, { remove: inputOptions })
+  let options = {
+    uri     : `http://localhost:${PORT}/api`,
+    method  : 'POST',
+    headers : data.headers,
+    json    : data.body,
+    qs      : data.query
+  }
+  if (input.params) { Object.keys(input.params).forEach(key => { options.uri += `/:${key}` }) }
+  if (data.params) { Object.keys(data.params).forEach(key => { options.uri.replace(`:${key}`, data.params[key]) }) }
+  const body = await _request(options)
+  await server.close()
+  return body.req
+}
+
+async function _createServer (INPUT, inputOptions = { remove: ['body'] }) {
   const app = express()
-  app.post('/libros', Validator.validate(INPUT), (req, res, next) => {
-    res.status(201).json({ status: 'OK', data: req.body })
+  let uri = '/api'
+  if (INPUT.params) { Object.keys(INPUT.params).forEach(key => { uri += `/:${key}` }) }
+  app.post(uri, Validator.validate(INPUT, inputOptions), (req, res, next) => {
+    const REQ = { headers: req.headers, params: req.params, query: req.query, body: req.body }
+    res.status(201).json({ status: 'OK', data: req.body, req: REQ })
+  })
+  app.post('/api', Validator.validate(INPUT, inputOptions), (req, res, next) => {
+    const REQ = { headers: req.headers, params: req.params, query: req.query, body: req.body }
+    res.status(201).json({ status: 'OK', data: req.body, req: REQ })
+  })
+  app.use((req, res, next) => {
+    return res.status(404).json({ status: 'FAIL' })
   })
   app.use((err, req, res, next) => {
     if (err.name === 'InputDataValidationError') {
@@ -296,6 +441,7 @@ function _request (options) {
   return new Promise((resolve, reject) => {
     return request(options, (error, response, body) => {
       if (error) { console.log(error); return reject(error) }
+      if (typeof body === 'string') body = JSON.parse(body)
       if (response.statusCode === 500) return reject(body)
       return resolve(body)
     })

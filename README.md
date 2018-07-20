@@ -39,7 +39,9 @@ const INPUT = {
   })
 }
 
-app.post('/libros', Validator.validate(INPUT), (req, res, next) => {
+const inputOptions = { remove: ['body'] }
+
+app.post('/libros', Validator.validate(INPUT, inputOptions), (req, res, next) => {
   return res.status(201).json({ status: 'OK', data: req.body })
 })
 
